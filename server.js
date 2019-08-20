@@ -13,6 +13,10 @@ app.get('/', function(req, res){
     res.send('Welcome to our Products API. Use endpoints to filter out the data');
 });
 
+app.get('/allProducts', function(req, res){
+    res.send(allProducts);
+})
+
 
 
 app.listen(port, () => {
