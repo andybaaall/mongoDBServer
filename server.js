@@ -34,6 +34,16 @@ app.get('/product/:id', function(req, res){
     }
 })
 
+app.post('/product', function(req, res){
+    // console.log('a post request has been made');
+    // console.log(req.body);
+    let product = {
+        name: req.body.name,
+        price: req.body.price,
+        message: 'We are about to send this product to a database'
+    };
+    res.send(product);
+});
 
 
 
