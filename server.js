@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 
 const config = require('./config.json');
 
+const Product = require('./models/products');
+
 mongoose.connect(`mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@cluster0-zd20o.mongodb.net/shop?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
 const db = mongoose.connection;
@@ -32,22 +34,25 @@ app.get('/', function(req, res){
 });
 
 app.get('/allProducts', function(req, res){
-    res.send(allProducts);
+    // res.send(allProducts);
+    Product.find().then(result => {
+        res.send(result);
+    })
 })
 
 
 app.get('/product/:id', function(req, res){
-    const id = req.params.id
-    for (var i = 0; i < allProducts.length; i++) {
-        if(id == allProducts[i].id){
-            res.send(allProducts[i]);
-            break;
-        }
-    }
-})
+    const id = req.params.id;
+    Product.findById(id, function (err, product) {
+        res.send(product);
+    });
+    // Product.findById(id).then(result => {
+    //     res.send(result);
+    // })
+});
 
 
-const Product = require('./models/products');
+
 
 app.post('/product', function(req, res){
     // console.log('a post request has been made');
