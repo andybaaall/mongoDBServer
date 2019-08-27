@@ -9,7 +9,7 @@ const config = require('./config.json');
 
 const Product = require('./models/products');
 
-mongoose.connect(`mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@cluster0-zd20o.mongodb.net/shop?retryWrites=true&w=majority`, {useNewUrlParser: true});
+mongoose.connect(`mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@andycluster-f7t5s.mongodb.net/shop?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -82,6 +82,7 @@ app.patch('/editProduct/:id', function(req, res){
     };
 
     Product.updateOne({ _id : id }, newProduct).then(result => {
+        console.log(result);  // okay so result is a big confusing object that contains a signature that incorporates binary?
         res.send(result);
     }).catch(err => res.send(err));
 })
