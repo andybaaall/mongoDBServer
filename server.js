@@ -1,13 +1,18 @@
+
+
 const express = require('express');
 const app = express();
 const port = 3000;
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
 
 const config = require('./config.json');
-
 const Product = require('./models/products');
+const User = require('./models/user.js')
 
 mongoose.connect(`mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@andycluster-f7t5s.mongodb.net/shop?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
@@ -51,9 +56,6 @@ app.get('/product/:id', function(req, res){
     // })
 });
 
-
-
-
 app.post('/product', function(req, res){
     // console.log('a post request has been made');
     // console.log(req.body);
@@ -87,7 +89,44 @@ app.patch('/editProduct/:id', function(req, res){
     }).catch(err => res.send(err));
 })
 
+app.post('/users', function(req, res){
+  const hash = bcrypt.hashSync(req.body.password);
+  console.log(hash);
+  console.log(`password hash is ${hash}`);
 
+  if (bcrypt.compareSync('password', hash)){
+    console.log('password matches');
+  } else {
+    console.log(`password doesn't match`);
+  }
+
+  res.send('found a route');
+});
+
+app.post('/getUser', function(req, res){
+
+  const user = new User({
+      _id: new mongoose.Types.ObjectId(),
+      username: req.body.username,
+      email: req.body.email,
+      hash: bcrypt.hashSync(req.body.password)
+  });
+
+  user.save().then(result => {
+      res.send(result);
+  }).catch(err => res.send(err));
+  // const hash = bcrypt.hashSync(req.body.password);
+  // console.log(hash);
+  // console.log(`password hash is ${hash}`);
+  //
+  // if (bcrypt.compareSync('password', hash)){
+  //   console.log('password matches');
+  // } else {
+  //   console.log(`password doesn't match`);
+  // }
+  //
+  // res.send('found a route');
+})
 
 
 
