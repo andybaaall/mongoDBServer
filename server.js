@@ -112,30 +112,43 @@ app.post('/getUser', function(req, res){
       hash: bcrypt.hashSync(req.body.password)
   });
 
-  user.save().then(result => {
-      res.send(result);
-  }).catch(err => res.send(err));
-  // const hash = bcrypt.hashSync(req.body.password);
-  // console.log(hash);
-  // console.log(`password hash is ${hash}`);
-  //
-  // if (bcrypt.compareSync('password', hash)){
-  //   console.log('password matches');
-  // } else {
-  //   console.log(`password doesn't match`);
-  // }
-  //
-  // res.send('found a route');
+  User.findOne({username: req.body.username}, function(err, user) {
+    if (user){
+      res.send('this username is taken, bub');
+    } else {
+      const hash = bcrypt.hashSync(req.body.password);
+      console.log(`password hash is ${hash}`);
+
+      const user = new User({
+          _id: new mongoose.Types.ObjectId(),
+          username: req.body.username,
+          email: req.body.email,
+          password: hash
+      });
+
+      user.save().then(result => {
+          res.send(result);
+      }).catch(err => res.send(err));
+    }
+  });
 })
 
 
+app.post('/login', function(req, res){
+  User.findOne({username: req.body.username}, function(err, user) {
+    if (user){
+      if (bcrypt.compareSync(req.body.password, user.hash)){
+        res.send(user);
+      } else {
+        res.send(`invalid password`);
+      }
+    } else {
+      res.send(`invalid username`);
+    }
+  });
 
-
-
-
-
-
-
+  console.log(`username is ${req.body.username}; password is ${req.body.password}`);
+});
 
 
 
