@@ -1,5 +1,3 @@
-
-
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -146,7 +144,6 @@ app.post('/login', function(req, res){
       res.send(`invalid username`);
     }
   });
-
   console.log(`username is ${req.body.username}; password is ${req.body.password}`);
 });
 
