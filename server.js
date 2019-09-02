@@ -102,7 +102,6 @@ app.post('/users', function(req, res){
 });
 
 app.post('/getUser', function(req, res){
-
   const user = new User({
       _id: new mongoose.Types.ObjectId(),
       username: req.body.username,
@@ -114,14 +113,16 @@ app.post('/getUser', function(req, res){
     if (user){
       res.send('this username is taken, bub');
     } else {
-      const hash = bcrypt.hashSync(req.body.password);
-      console.log(`password hash is ${hash}`);
+      // const hash = ;
+      // console.log(`password hash is ${hash}`);'
+
+      console.log(req.body.password);
 
       const user = new User({
           _id: new mongoose.Types.ObjectId(),
           username: req.body.username,
           email: req.body.email,
-          password: hash
+          hash: bcrypt.hashSync(req.body.password)
       });
 
       user.save().then(result => {
