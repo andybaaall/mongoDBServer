@@ -130,8 +130,14 @@ app.post('/getUser', function(req, res){
       }).catch(err => res.send(err));
     }
   });
-})
+});
 
+app.delete('/product/:id', function(req, res){
+    const id = req.params.id;
+    Product.deleteOne({ _id: id }, function (err) {
+        res.send('deleted');
+    });
+});
 
 app.post('/login', function(req, res){
   User.findOne({username: req.body.username}, function(err, user) {
@@ -147,8 +153,6 @@ app.post('/login', function(req, res){
   });
   console.log(`username is ${req.body.username}; password is ${req.body.password}`);
 });
-
-
 
 app.listen(port, () => {
     console.clear();
