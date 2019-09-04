@@ -44,10 +44,14 @@ app.get('/allProducts', function(req, res){
 })
 
 
-app.get('/product/:id', function(req, res){
+app.post('/product/:id', function(req, res){
     const id = req.params.id;
     Product.findById(id, function (err, product) {
-        res.send(product);
+        if (product.user_id == req.body.userId) {
+          res.send(product);
+        } else {
+          res.send('401');
+        }
     });
     // Product.findById(id).then(result => {
     //     res.send(result);
@@ -55,18 +59,11 @@ app.get('/product/:id', function(req, res){
 });
 
 app.post('/product', function(req, res){
-    // console.log('a post request has been made');
-    // console.log(req.body);
-    // let product = {
-    //     name: req.body.name,
-    //     price: req.body.price,
-    //     message: 'We are about to send this product to a database'
-    // };
-    // res.send(product);
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
-        price: req.body.price
+        price: req.body.price,
+        user_id: req.body.userId
     });
 
     product.save().then(result => {
@@ -76,15 +73,23 @@ app.post('/product', function(req, res){
 
 app.patch('/editProduct/:id', function(req, res){
     const id = req.params.id;
-    const newProduct = {
-        name: req.body.name,
-        price: req.body.price
-    };
 
-    Product.updateOne({ _id : id }, newProduct).then(result => {
-        console.log(result);  // okay so result is a big confusing object that contains a signature that incorporates binary?
-        res.send(result);
-    }).catch(err => res.send(err));
+    Product.findById(id, function(err, product){
+      if(product.user_id == req.body.userId){
+
+        const newProduct = {
+            name: req.body.name,
+            price: req.body.price
+        };
+
+        Product.updateOne({ _id : id }, newProduct).then(result => {
+            console.log(result);  // okay so result is a big confusing object that contains a signature that incorporates binary?
+            res.send(result);
+        }).catch(err => res.send(err));
+      } else {
+        res.send(`401 error - permission denied`);
+      }
+    }).catch(err => res.send(`404 - Sorry, but we can't find a product with that id!`))
 })
 
 app.post('/users', function(req, res){
